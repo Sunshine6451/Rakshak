@@ -1,0 +1,188 @@
+/* =========================
+   Global Styles
+========================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: #f8f9fa;
+  color: #333;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Dark Mode */
+body.dark-mode {
+  background: #121212;
+  color: #f1f1f1;
+}
+
+/* Header & Navigation */
+header {
+  background: #32bfed;
+  color: white;
+  padding: 15px 20px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+header h1 {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+nav a, nav button {
+  color: white;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: background 0.3s;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+nav a:hover, nav button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Main Content */
+main {
+  flex: 1;
+  padding: 20px;
+  max-width: 900px;
+  margin: auto;
+}
+
+section {
+  margin-bottom: 30px;
+}
+
+h2 {
+  margin-bottom: 12px;
+  color: #32bfed;
+  font-size: 1.4rem;
+}
+
+/* Contact Tags */
+#contact-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tag {
+  background: #32bfed;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+
+.tag button {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Contact Input */
+.contact-input {
+  display: flex;
+  gap: 8px;
+}
+
+.contact-input input {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  font-size: 1rem;
+}
+
+.contact-input input:focus {
+  border-color: #32bfed;
+}
+
+.contact-input button {
+  background: #32bfed;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: background 0.3s;
+}
+
+.contact-input button:hover {
+  background: #32bfed;
+}
+
+/* SOS Button */
+#sosBtn {
+  display: block;
+  width: 100%;
+  max-width: 350px;
+  margin: 20px auto;
+  padding: 16px;
+  font-size: 1.4rem;
+  font-weight: bold;
+  background: #32bfed;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(43, 198, 241, 0.677);
+  transition: transform 0.2s, background 0.3s;
+}
+
+#sosBtn:hover {
+  background: #32bfed;
+  transform: scale(1.05);
+}
+
+#sosBtn:active {
+  transform: scale(0.95);
+}
+
+/* Map Container */
+#map {
+  width: 100%;
+  height: 300px;
+  border-radius: 12px;
+  margin: 20px 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 12px;
+  background: #222;
+  color: #fff;
+  font-size: 0.9rem;
+  border-top: 4px solid #e6004c;
+  margin-top: auto;
+}
