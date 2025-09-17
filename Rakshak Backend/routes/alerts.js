@@ -3,6 +3,8 @@ import { supabase } from "../SupabaseClient.js";
 
 const router = express.Router();
 
+console.log("🚨 Insert request:", { userId, latitude, longitude });
+
 // Trigger SOS Alert
 router.post("/", async (req, res) => {
   const { userId, latitude, longitude } = req.body;
