@@ -1,6 +1,5 @@
 let map, marker;
-const BACKEND_URL = "http://localhost:5000/api"; // replace with deployed backend
-const USER_ID = "user123"; // unique user ID
+const BACKEND_URL = "http://localhost:5000/"; // replace with deployed backend
 
 /* ====================
    Google Map
