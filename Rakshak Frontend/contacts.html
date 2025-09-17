@@ -5,7 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contacts - Women Safety Band</title>
   <link rel="stylesheet" href="Rakshak.css">
-  <script defer src="/Rakshak Backend/Rakshak.js"></script>
+  <style>
+    /* Quick inline CSS for tags */
+    #contact-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .tag {
+      background-color: #ffefc1;
+      padding: 8px 12px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: bold;
+    }
+    .tag button {
+      background: #ff4d4d;
+      border: none;
+      border-radius: 50%;
+      color: white;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -33,5 +60,81 @@
   <footer>
     <p>⚡ Stay Safe. Stay Strong. ⚡</p>
   </footer>
+
+  <script>
+    const BACKEND_URL = "https://"; // Replace with your backend URL
+    const USER_ID = "user123"; // Replace with logged-in user ID
+
+    const contactTags = document.getElementById("contact-tags");
+    const contactInput = document.getElementById("contactInput");
+    const addContactBtn = document.getElementById("addContactBtn");
+
+    // Load contacts from backend
+    async function loadContacts() {
+      try {
+        const res = await fetch(`${BACKEND_URL}/contacts/${USER_ID}`);
+        const contacts = await res.json();
+        contactTags.innerHTML = "";
+        contacts.forEach(c => addContactTag(c.id, c.phone_number));
+      } catch (err) {
+        console.error("Failed to load contacts:", err);
+      }
+    }
+
+    // Add a contact tag visually
+    function addContactTag(id, number) {
+      const tag = document.createElement("div");
+      tag.className = "tag";
+      tag.innerHTML = `${number} <button onclick="removeContact(${id}, this)">x</button>`;
+      contactTags.appendChild(tag);
+    }
+
+    // Add new contact to backend
+    async function addContactToBackend(number) {
+      try {
+        const res = await fetch(`${BACKEND_URL}/contacts`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: USER_ID,
+            name: "Family",
+            phone_number: number,
+            relation: "Family"
+          })
+        });
+        return await res.json();
+      } catch (err) {
+        console.error("Failed to add contact:", err);
+      }
+    }
+
+    // Remove contact
+    async function removeContact(id, btn) {
+      btn.parentElement.remove();
+      try {
+        await fetch(`${BACKEND_URL}/contacts/${USER_ID}/${id}`, { method: "DELETE" });
+      } catch (err) {
+        console.error("Failed to delete contact:", err);
+      }
+    }
+
+    // Event listener for adding contact
+    if (addContactBtn) {
+      addContactBtn.addEventListener("click", async () => {
+        const number = contactInput.value.trim();
+        if (!number) return;
+        const result = await addContactToBackend(number);
+        if (result && result.success) {
+          addContactTag(result.contact.id, number);
+          contactInput.value = "";
+        } else {
+          alert("❌ Failed to add contact!");
+        }
+      });
+    }
+
+    // Load contacts on page load
+    loadContacts();
+  </script>
 </body>
 </html>
