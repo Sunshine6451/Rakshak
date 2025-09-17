@@ -29,6 +29,4 @@ router.get("/:userId", async (req, res) => {
   res.json(data);
 });
 
-console.log("🚨 Insert request:", { userId, latitude, longitude });
-
 export default router;
