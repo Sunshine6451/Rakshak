@@ -9,7 +9,11 @@ router.post("/", async (req, res) => {
 
   const { data, error } = await supabase
     .from("sos_alerts")
-    .insert([{ user_id: userId, latitude, longitude }])
+    .insert([{ 
+      user_id: userId, 
+      latitude, 
+      longitude 
+    }]) // ✅ no id
     .select();
 
   if (error) return res.status(400).json({ error: error.message });

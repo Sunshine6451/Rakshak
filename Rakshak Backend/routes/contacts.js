@@ -9,7 +9,12 @@ router.post("/", async (req, res) => {
 
   const { data, error } = await supabase
     .from("emergency_contacts")
-    .insert([{ user_id: userId, name, phone_number, relation }])
+    .insert([{ 
+      user_id: userId, 
+      name, 
+      phone_number, 
+      relation 
+    }]) // ✅ no id
     .select();
 
   if (error) return res.status(400).json({ error: error.message });

@@ -9,7 +9,10 @@ router.post("/", async (req, res) => {
 
   const { data, error } = await supabase
     .from("devices")
-    .insert([{ user_id: userId, device_id }])
+    .insert([{ 
+      user_id: userId, 
+      device_id 
+    }]) // ✅ no id
     .select();
 
   if (error) return res.status(400).json({ error: error.message });
