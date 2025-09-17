@@ -33,5 +33,16 @@ router.get("/:userId", async (req, res) => {
   if (error) return res.status(400).json({ error: error.message });
   res.json(data);
 });
+router.delete("/:userId/:contactId", async (req, res) => {
+  const { userId, contactId } = req.params;
+  const { error } = await supabase
+    .from("emergency_contacts")
+    .delete()
+    .eq("user_id", userId)
+    .eq("id", contactId);
+
+  if (error) return res.status(400).json({ error: error.message });
+  res.json({ success: true });
+});
 
 export default router;
