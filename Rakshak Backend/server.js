@@ -8,6 +8,7 @@ import profiles from "./routes/profiles.js";
 import devices from "./routes/devices.js";
 import contacts from "./routes/contacts.js";
 import alerts from "./routes/alerts.js";
+import ping from "./routes/ping.js";
 
 dotenv.config();
 const app = express();
@@ -27,6 +28,7 @@ app.use("/profiles", profiles);
 app.use("/devices", devices);
 app.use("/contacts", contacts);
 app.use("/alerts", alerts);
+app.use("/ping",ping);
 
 // Start server
 app.listen(PORT, () => {
