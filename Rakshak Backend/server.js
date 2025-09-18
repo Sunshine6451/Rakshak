@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 import profiles from "./routes/profiles.js";
 import devices from "./routes/devices.js";
 import contacts from "./routes/contacts.js";
-import alerts from "./routes/alerts.js";
+import alertsRouter from "./routes/alerts.js";
 import ping from "./routes/ping.js";
 
 dotenv.config();
@@ -27,7 +27,7 @@ app.get("/", (req, res) => {
 app.use("/profiles", profiles);
 app.use("/devices", devices);
 app.use("/contacts", contacts);
-app.use("/alerts", alerts);
+app.use("/alerts", alertsRouter);
 app.use("/ping",ping);
 
 // Start server

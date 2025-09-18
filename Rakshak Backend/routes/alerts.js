@@ -1,3 +1,4 @@
+console.log("✅ Alerts router loaded");
 import express from "express";
 import { supabase } from "../SupabaseClient.js";
 import twilio from "twilio";
