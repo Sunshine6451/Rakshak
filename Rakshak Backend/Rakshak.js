@@ -1,5 +1,5 @@
-const BACKEND_URL = "https://your-deployed-backend.com"; // replace with deployed URL
-const USER_ID = "user123"; // replace with logged-in user ID
+const BACKEND_URL = "http://localhost:5000"; // your backend
+const USER_ID = "b64a186f-440d-4f1a-bdb9-7097d089b00f"; // real UUID
 
 /* ====================
    Google Map & Location
@@ -21,6 +21,8 @@ function getLocation() {
       const lon = pos.coords.longitude;
       document.getElementById("location").innerText = `Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}`;
       initMap(lat, lon);
+      window.currentLat = lat;
+      window.currentLon = lon;
     });
   }
 }
@@ -38,13 +40,13 @@ async function loadContacts() {
   const res = await fetch(`${BACKEND_URL}/contacts/${USER_ID}`);
   const contacts = await res.json();
   contactTags.innerHTML = "";
-  contacts.forEach(c => addContactTag(c.id, c.phone_number));
+  contacts.forEach(c => addContactTag(c.id, c.name, c.phone_number, c.relation));
 }
 
-function addContactTag(id, number) {
+function addContactTag(id, name, number, relation) {
   const tag = document.createElement("div");
   tag.className = "tag";
-  tag.innerHTML = `${number} <button onclick="removeContact(${id}, this)">x</button>`;
+  tag.innerHTML = `${name} (${relation}) - ${number}`;
   contactTags.appendChild(tag);
 }
 
@@ -53,7 +55,12 @@ async function addContactToBackend(number) {
   const res = await fetch(`${BACKEND_URL}/contacts`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId: USER_ID, name: "Family", phone_number: number, relation: "Family" }),
+    body: JSON.stringify({
+      userId: USER_ID,
+      name: "Family", // static for now
+      phone_number: number,
+      relation: "Family"
+    }),
   });
   return await res.json();
 }
@@ -64,16 +71,10 @@ if (addContactBtn) {
     if (!number) return;
     const result = await addContactToBackend(number);
     if (result.success) {
-      addContactTag(result.contact.id, number);
+      addContactTag(result.contact.id, result.contact.name, result.contact.phone_number, result.contact.relation);
       contactInput.value = "";
-    } else alert("Failed to add contact!");
+    } else alert("❌ Failed to add contact!");
   });
-}
-
-// Remove contact
-async function removeContact(id, btn) {
-  btn.parentElement.remove();
-  await fetch(`${BACKEND_URL}/contacts/${USER_ID}/${id}`, { method: "DELETE" });
 }
 
 loadContacts();
@@ -86,7 +87,7 @@ async function sendSOS() {
   navigator.geolocation.getCurrentPosition(async pos => {
     const lat = pos.coords.latitude;
     const lon = pos.coords.longitude;
-    const res = await fetch(`${BACKEND_URL}/sos`, {
+    const res = await fetch(`${BACKEND_URL}/alerts`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId: USER_ID, latitude: lat, longitude: lon }),
@@ -106,7 +107,9 @@ const toggleMode = document.getElementById("toggleMode");
 if (toggleMode) {
   toggleMode.addEventListener("click", () => {
     document.body.classList.toggle("dark-mode");
-    toggleMode.innerText = document.body.classList.contains("dark-mode") ? "☀️ Light Mode" : "🌙 Dark Mode";
+    toggleMode.innerText = document.body.classList.contains("dark-mode")
+      ? "☀️ Light Mode"
+      : "🌙 Dark Mode";
   });
 }
 
