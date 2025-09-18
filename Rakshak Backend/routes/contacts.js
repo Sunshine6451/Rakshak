@@ -17,9 +17,10 @@ router.post("/", async (req, res) => {
     }]) // ✅ no id
     .select();
 
-  if (error) return res.status(400).json({ error: error.message });
-  res.json({ success: true, contact: data[0] });
-});
+    console.error("Insert Contact Error:", error.message);
+  return res.status(400).json({ error: error.message });
+}
+);
 
 // Get Contacts for a User
 router.get("/:userId", async (req, res) => {

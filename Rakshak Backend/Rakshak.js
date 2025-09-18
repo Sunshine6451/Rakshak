@@ -71,9 +71,11 @@ if (addContactBtn) {
     if (!number) return;
     const result = await addContactToBackend(number);
     if (result.success) {
-      addContactTag(result.contact.id, result.contact.name, result.contact.phone_number, result.contact.relation);
-      contactInput.value = "";
-    } else alert("❌ Failed to add contact!");
+        addContactTag(result.contact.id, result.contact.name, result.contact.phone_number, result.contact.relation);
+    contactInput.value = "";
+    } else {
+      alert("❌ Failed to add contact: " + (result.error || JSON.stringify(result)));
+    }
   });
 }
 
