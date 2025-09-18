@@ -2,37 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contacts - Women Safety Band</title>
-  <link rel="stylesheet" href="Rakshak.css">
-  <style>
-    /* Quick inline CSS for tags */
-    #contact-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-    .tag {
-      background-color: #ffefc1;
-      padding: 8px 12px;
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-weight: bold;
-    }
-    .tag button {
-      background: #ff4d4d;
-      border: none;
-      border-radius: 50%;
-      color: white;
-      width: 20px;
-      height: 20px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Emergency Contacts - Rakshak</title>
+  <link rel="stylesheet" href="Rakshak.css" />
+  <script defer src="/Rakshak Backend/Rakshak.js"></script>
 </head>
 <body>
   <header>
@@ -41,17 +14,20 @@
       <a href="index.html">🏠 Home</a>
       <a href="about.html">ℹ️ About</a>
       <a href="tips.html">📝 Tips</a>
-      <a href="contacts.html">📞 Contacts</a>
+      <a href="contacts.html" class="active">📞 Contacts</a>
       <a href="settings.html">⚙️ Settings</a>
     </nav>
   </header>
 
   <main>
     <section class="contacts-section">
-      <h2>Manage Your Contacts</h2>
+      <h2>👩‍👩‍👧 Your Emergency Contacts</h2>
       <div id="contact-tags"></div>
+
       <div class="contact-input">
-        <input type="text" id="contactInput" placeholder="Enter contact number" />
+        <input type="text" id="contactName" placeholder="Enter contact name" />
+        <input type="text" id="contactRelation" placeholder="Enter relation" />
+        <input type="text" id="contactInput" placeholder="Enter phone number" />
         <button id="addContactBtn">➕ Add</button>
       </div>
     </section>
@@ -60,80 +36,5 @@
   <footer>
     <p>⚡ Stay Safe. Stay Strong. ⚡</p>
   </footer>
-
-  <script>
-    const BACKEND_URL = "https://localhost:5000"; // Replace with your backend URL
-
-    const contactTags = document.getElementById("contact-tags");
-    const contactInput = document.getElementById("contactInput");
-    const addContactBtn = document.getElementById("addContactBtn");
-
-    // Load contacts from backend
-    async function loadContacts() {
-      try {
-        const res = await fetch(`${BACKEND_URL}/contacts/${USER_ID}`);
-        const contacts = await res.json();
-        contactTags.innerHTML = "";
-        contacts.forEach(c => addContactTag(c.id, c.phone_number));
-      } catch (err) {
-        console.error("Failed to load contacts:", err);
-      }
-    }
-
-    // Add a contact tag visually
-    function addContactTag(id, number) {
-      const tag = document.createElement("div");
-      tag.className = "tag";
-      tag.innerHTML = `${number} <button onclick="removeContact(${id}, this)">x</button>`;
-      contactTags.appendChild(tag);
-    }
-
-    // Add new contact to backend
-    async function addContactToBackend(number) {
-      try {
-        const res = await fetch(`${BACKEND_URL}/contacts`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userId: USER_ID,
-            name: "Family",
-            phone_number: number,
-            relation: "Family"
-          })
-        });
-        return await res.json();
-      } catch (err) {
-        console.error("Failed to add contact:", err);
-      }
-    }
-
-    // Remove contact
-    async function removeContact(id, btn) {
-      btn.parentElement.remove();
-      try {
-        await fetch(`${BACKEND_URL}/contacts/${USER_ID}/${id}`, { method: "DELETE" });
-      } catch (err) {
-        console.error("Failed to delete contact:", err);
-      }
-    }
-
-    // Event listener for adding contact
-    if (addContactBtn) {
-      addContactBtn.addEventListener("click", async () => {
-        const number = contactInput.value.trim();
-        if (!number) return;
-        const result = await addContactToBackend(number);
-        if (result && result.success) {
-          addContactTag(result.contact.id, number);
-          contactInput.value = "";
-        } else {
-          alert("❌ Failed to add contact!");
-        }
-      });
-    }
-
-    // Load contacts on page load
-    loadContacts();
-  </script>
 </body>
 </html>

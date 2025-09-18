@@ -16,7 +16,12 @@ router.post("/", async (req, res) => {
     }]) // ✅ no id
     .select();
 
-  if (error) return res.status(400).json({ error: error.message });
+  console.log("Received SOS:", userId, latitude, longitude);
+if (error) {
+  console.error("Insert SOS Error:", error.message);
+  return res.status(400).json({ error: error.message });
+}
+console.log("Inserted SOS:", data);
   res.json({ success: true, alert: data[0] });
 });
 

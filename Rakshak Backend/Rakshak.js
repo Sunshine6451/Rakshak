@@ -19,7 +19,12 @@ function getLocation() {
     navigator.geolocation.getCurrentPosition(pos => {
       const lat = pos.coords.latitude;
       const lon = pos.coords.longitude;
-      document.getElementById("location").innerText = `Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}`;
+     
+      const locationEl = document.getElementById("location");
+      if (locationEl) {
+        locationEl.innerText = `Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}`;
+      }
+
       initMap(lat, lon);
       window.currentLat = lat;
       window.currentLon = lon;
@@ -32,54 +37,79 @@ getLocation();
    Contacts Section
 ==================== */
 const contactTags = document.getElementById("contact-tags");
-const contactInput = document.getElementById("contactInput");
 const addContactBtn = document.getElementById("addContactBtn");
 
 // Load contacts from backend
 async function loadContacts() {
-  const res = await fetch(`${BACKEND_URL}/contacts/${USER_ID}`);
-  const contacts = await res.json();
-  contactTags.innerHTML = "";
-  contacts.forEach(c => addContactTag(c.id, c.name, c.phone_number, c.relation));
+  try {
+    const res = await fetch(`${BACKEND_URL}/contacts/${USER_ID}`);
+    const contacts = await res.json();
+    contactTags.innerHTML = "";
+    contacts.forEach(c =>
+      addContactTag(c.id, c.name, c.phone_number, c.relation)
+    );
+  } catch (err) {
+    console.error("Error loading contacts:", err);
+  }
 }
 
+// Add one contact element to UI
 function addContactTag(id, name, number, relation) {
   const tag = document.createElement("div");
   tag.className = "tag";
-  tag.innerHTML = `${name} (${relation}) - ${number}`;
+  tag.innerHTML = `
+    ${name} (${relation}) - ${number}
+  `;
   contactTags.appendChild(tag);
 }
 
-// Add new contact
-async function addContactToBackend(number) {
+// Add contact to backend
+async function addContactToBackend(name, relation, number) {
   const res = await fetch(`${BACKEND_URL}/contacts`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       userId: USER_ID,
-      name: "Family", // static for now
+      name,
       phone_number: number,
-      relation: "Family"
+      relation
     }),
   });
   return await res.json();
 }
 
+// Handle add button click
 if (addContactBtn) {
   addContactBtn.addEventListener("click", async () => {
-    const number = contactInput.value.trim();
-    if (!number) return;
-    const result = await addContactToBackend(number);
+    const name = document.getElementById("contactName").value.trim();
+    const relation = document.getElementById("contactRelation").value.trim();
+    const number = document.getElementById("contactInput").value.trim();
+
+    if (!name || !relation || !number) {
+      alert("⚠️ Please enter name, relation, and number!");
+      return;
+    }
+
+    const result = await addContactToBackend(name, relation, number);
     if (result.success) {
-        addContactTag(result.contact.id, result.contact.name, result.contact.phone_number, result.contact.relation);
-    contactInput.value = "";
+      addContactTag(
+        result.contact.id,
+        result.contact.name,
+        result.contact.phone_number,
+        result.contact.relation
+      );
+      document.getElementById("contactName").value = "";
+      document.getElementById("contactRelation").value = "";
+      document.getElementById("contactInput").value = "";
     } else {
       alert("❌ Failed to add contact: " + (result.error || JSON.stringify(result)));
     }
   });
 }
 
-loadContacts();
+// Load contacts on page ready
+document.addEventListener("DOMContentLoaded", loadContacts);
+
 
 /* ====================
    SOS Section
