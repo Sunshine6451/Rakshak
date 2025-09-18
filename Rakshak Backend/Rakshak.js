@@ -1,4 +1,4 @@
-const BACKEND_URL = "http://localhost:5000"; // your backend
+const BACKEND_URL = "http://localhost:5000"; // backend
 const USER_ID = "b64a186f-440d-4f1a-bdb9-7097d089b00f"; // real UUID
 
 /* ====================
@@ -57,10 +57,72 @@ async function loadContacts() {
 function addContactTag(id, name, number, relation) {
   const tag = document.createElement("div");
   tag.className = "tag";
+
   tag.innerHTML = `
-    ${name} (${relation}) - ${number}
+    <span class="contact-text">${name} (${relation}) - ${number}</span>
+    <input class="edit-name" type="text" value="${name}" style="display:none" />
+    <input class="edit-relation" type="text" value="${relation}" style="display:none" />
+    <input class="edit-number" type="text" value="${number}" style="display:none" />
+    <button class="edit-btn">✏️</button>
+    <button class="save-btn" style="display:none">💾</button>
+    <button class="delete-btn">🗑️</button>
   `;
   contactTags.appendChild(tag);
+
+  const contactText = tag.querySelector(".contact-text");
+  const editName = tag.querySelector(".edit-name");
+  const editRelation = tag.querySelector(".edit-relation");
+  const editNumber = tag.querySelector(".edit-number");
+  const editBtn = tag.querySelector(".edit-btn");
+  const saveBtn = tag.querySelector(".save-btn");
+  const deleteBtn = tag.querySelector(".delete-btn");
+
+  // Delete contact
+  deleteBtn.addEventListener("click", async () => {
+    if (confirm(`Delete ${name}?`)) {
+      const res = await fetch(`${BACKEND_URL}/contacts/${id}`, { method: "DELETE" });
+      const result = await res.json();
+      if (result.success) tag.remove();
+      else alert("❌ Failed to delete contact");
+    }
+  });
+
+  // Edit contact (show inputs)
+  editBtn.addEventListener("click", () => {
+    contactText.style.display = "none";
+    editName.style.display = "inline-block";
+    editRelation.style.display = "inline-block";
+    editNumber.style.display = "inline-block";
+    editBtn.style.display = "none";
+    saveBtn.style.display = "inline-block";
+  });
+
+  // Save updated contact
+  saveBtn.addEventListener("click", async () => {
+    const newName = editName.value.trim();
+    const newRelation = editRelation.value.trim();
+    const newNumber = editNumber.value.trim();
+
+    if (!newName || !newRelation || !newNumber) return alert("⚠️ All fields are required!");
+
+    const res = await fetch(`${BACKEND_URL}/contacts/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: newName, relation: newRelation, phone_number: newNumber }),
+    });
+    const result = await res.json();
+    if (result.success) {
+      contactText.innerText = `${newName} (${newRelation}) - ${newNumber}`;
+      contactText.style.display = "inline";
+      editName.style.display = "none";
+      editRelation.style.display = "none";
+      editNumber.style.display = "none";
+      editBtn.style.display = "inline-block";
+      saveBtn.style.display = "none";
+    } else {
+      alert("❌ Failed to update contact");
+    }
+  });
 }
 
 // Add contact to backend
@@ -76,6 +138,24 @@ async function addContactToBackend(name, relation, number) {
     }),
   });
   return await res.json();
+}
+async function updateContact(id, name, relation, number, tagElement) {
+  try {
+    const res = await fetch(`${BACKEND_URL}/contacts/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, relation, phone_number: number }),
+    });
+    const result = await res.json();
+    if (result.success) {
+      tagElement.querySelector("span").innerText = `${name} (${relation}) - ${number}`;
+    } else {
+      alert("❌ Failed to update contact");
+    }
+  } catch (err) {
+    console.error("Error updating contact:", err);
+    alert("❌ Error updating contact");
+  }
 }
 
 // Handle add button click
