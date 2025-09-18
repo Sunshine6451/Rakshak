@@ -73,5 +73,22 @@ router.post("/", async (req, res) => {
     smsResponse,
   });
 });
+// GET /alerts/test - Send test SMS
+router.get("/test", async (req, res) => {
+  const testNumber = req.query.number; // Pass ?number=yourPhone
+  if (!testNumber) {
+    return res.status(400).json({ error: "Please provide a phone number ?number=" });
+  }
+
+  const message = "🚨 Test Alert from Rakshak Women Safety Band. Stay Safe! ⚡";
+
+  const smsResponse = await sendSMSFast2SMS([testNumber], message);
+
+  res.json({
+    success: true,
+    message: "Test SMS sent",
+    smsResponse,
+  });
+});
 
 export default router;
