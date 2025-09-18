@@ -1,4 +1,9 @@
 console.log("✅ Alerts router loaded");
+console.log("Twilio Config:", {
+  sid: process.env.TWILIO_ACCOUNT_SID,
+  token: process.env.TWILIO_AUTH_TOKEN ? "✅ Loaded" : "❌ Missing",
+  service: process.env.TWILIO_MESSAGING_SERVICE_SID,
+});
 import express from "express";
 import { supabase } from "../SupabaseClient.js";
 import twilio from "twilio";
@@ -46,8 +51,9 @@ router.post("/", async (req, res) => {
     try {
       const msg = await client.messages.create({
         body: message,
-        messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID,
-        to: number,
+        to: testNumber,
+        messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID || undefined,
+        from: process.env.TWILIO_PHONE || undefined,  // fallback if service SID fails
       });
       smsResults.push({ to: number, status: msg.status });
     } catch (err) {
@@ -66,7 +72,7 @@ router.post("/", async (req, res) => {
 router.get("/test-twilio", async (req, res) => {
   const testNumber = req.query.number;
   if (!testNumber) {
-    return res.status(400).json({ error: "Provide ?number=+919510416133" });
+    return res.status(400).json({ error: "Provide ?number=+91xxxxxxxxxx" });
   }
 
   const message = "🚨 Test SMS from Rakshak Safety Band (via Twilio). Stay Safe!";
@@ -74,8 +80,9 @@ router.get("/test-twilio", async (req, res) => {
   try {
     const msg = await client.messages.create({
       body: message,
-      messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID,
       to: testNumber,
+      messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID || undefined,
+      from: process.env.TWILIO_PHONE || undefined, // fallback for trial
     });
 
     res.json({
@@ -87,9 +94,16 @@ router.get("/test-twilio", async (req, res) => {
     });
   } catch (err) {
     console.error("Twilio Test Error:", err.message);
+
+    // Custom error for trial account restriction
+    if (err.message.includes("unverified")) {
+      return res.status(403).json({
+        error: "Trial account restriction: You can only send SMS to verified numbers in Twilio Console.",
+        details: err.message,
+      });
+    }
+
     res.status(500).json({ error: err.message });
   }
 });
-
-
 export default router;
