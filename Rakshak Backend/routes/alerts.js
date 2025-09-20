@@ -1,4 +1,6 @@
+
 console.log("✅ Alerts router loaded");
+
 import express from "express";
 import { supabase } from "../SupabaseClient.js";
 import twilio from "twilio";
@@ -13,6 +15,7 @@ const client = twilio(
 
 // POST /alerts - Trigger SOS
 router.post("/", async (req, res) => {
+  console.log("Incoming request:", req.method, req.originalUrl, req.body);
   const { userId, latitude, longitude } = req.body;
 
   // Save alert in Supabase
@@ -75,6 +78,8 @@ router.post("/", async (req, res) => {
 
 // GET /alerts/test-twilio?number=+919510416133
 router.get("/test-twilio", async (req, res) => {
+  console.log("Incoming request:", req.method, req.originalUrl, req.body);
+
   const testNumber = req.query.number;
   if (!testNumber) {
     return res.status(400).json({ error: "Provide ?number=+919510416133" });

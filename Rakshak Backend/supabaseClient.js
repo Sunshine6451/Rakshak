@@ -8,4 +8,4 @@ const supabase = createClient(
   process.env.SUPABASE_KEY
 );
 
-export { supabase };   // ✅ named export
+export { supabase };   

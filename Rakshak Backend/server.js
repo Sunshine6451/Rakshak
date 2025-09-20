@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 // Import routes
 import profiles from "./routes/profiles.js";
 import devices from "./routes/devices.js";
-import contacts from "./routes/contacts.js";
+import contactsRouter from "./routes/contacts.js";
 import alertsRouter from "./routes/alerts.js";
 import ping from "./routes/ping.js";
 
@@ -26,7 +26,7 @@ app.get("/", (req, res) => {
 // Routes
 app.use("/profiles", profiles);
 app.use("/devices", devices);
-app.use("/contacts", contacts);
+app.use("/contacts", contactsRouter);
 app.use("/alerts", alertsRouter);
 app.use("/ping",ping);
 

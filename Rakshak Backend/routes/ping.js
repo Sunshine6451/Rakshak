@@ -4,6 +4,7 @@ import { supabase } from "../SupabaseClient.js";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
+  console.log("Incoming request:", req.method, req.originalUrl, req.body);
   try {
     // Try fetching from profiles just to test DB connection
     const { data, error } = await supabase.from("profiles").select("id").limit(1);

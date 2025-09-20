@@ -1,3 +1,5 @@
+
+
 import express from "express";
 import { supabase } from "../SupabaseClient.js";
 
@@ -5,6 +7,7 @@ const router = express.Router();
 
 // Register Device
 router.post("/", async (req, res) => {
+  console.log("Incoming request:", req.method, req.originalUrl, req.body);
   const { userId, device_id } = req.body;
 
   const { data, error } = await supabase
@@ -21,6 +24,7 @@ router.post("/", async (req, res) => {
 
 // Get Devices for a user
 router.get("/:userId", async (req, res) => {
+  console.log("Incoming request:", req.method, req.originalUrl, req.body);
   const { userId } = req.params;
 
   const { data, error } = await supabase

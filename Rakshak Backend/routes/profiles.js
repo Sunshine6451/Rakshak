@@ -5,8 +5,9 @@ const router = express.Router();
 
 // Create / Update Profile
 router.post("/", async (req, res) => {
+  console.log("Incoming request:", req.method, req.originalUrl, req.body);
+  
   const { id, full_name, phone_number } = req.body;
-
   const { data, error } = await supabase
     .from("profiles")
     .upsert([{ id, full_name, phone_number }]) // upsert = insert or update
@@ -18,6 +19,8 @@ router.post("/", async (req, res) => {
 
 // Get Profile
 router.get("/:userId", async (req, res) => {
+  console.log("Incoming request:", req.method, req.originalUrl, req.body);
+
   const { userId } = req.params;
 
   const { data, error } = await supabase
